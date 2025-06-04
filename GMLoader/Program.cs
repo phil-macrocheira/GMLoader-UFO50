@@ -1,4 +1,4 @@
-#region Using Directives
+﻿#region Using Directives
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json.Linq;
@@ -297,20 +297,22 @@ public class GMLoaderProgram
     {
         try
         {
+            string logFile = "GMLoader.log";
+            string configFile = "GMLoader.ini";
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            if (File.Exists("GMLoader.log"))
-            File.Delete("GMLoader.log");
+            if (File.Exists(logFile))
+            File.Delete(logFile);
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
-                .WriteTo.File("GMLoader.log")
+                .WriteTo.File(logFile)
                 .CreateLogger();
 
             Console.Title = "GMLoader";
 
-            if (!File.Exists("GMLoader.ini"))
+            if (!File.Exists(configFile))
             {
                 Log.Information("Missing GMLoader.ini file \n\n\nPress any key to close...");
                 Console.ReadKey();
@@ -318,7 +320,7 @@ public class GMLoaderProgram
             }
 
             IConfig config = new ConfigurationBuilder<IConfig>()
-               .UseIniFile("GMLoader.ini")
+               .UseIniFile(configFile)
                .Build();
 
             #region Config
@@ -447,7 +449,7 @@ public class GMLoaderProgram
 
             if (!compilePreCSX && !compileBuiltInCSX && !compilePostCSX)
             {
-                Log.Information("Bruh. \n\n\nPress any key to close...");
+                Log.Information("What are you trying to do? \n\n\nPress any key to close...");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
@@ -544,12 +546,14 @@ public class GMLoaderProgram
                     Log.Information("");
                 }
                 Console.WriteLine("");
+                //Nice path
                 Log.Information($"Assets has been exported to {Path.GetDirectoryName(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, exportCodeOutputPath)))}");
                 Console.WriteLine("");
                 Log.Information("Press any key to close...");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
+
             if (File.Exists(backupDataPath))
             {
                 currentHash = ComputeFileHash3(backupDataPath);
@@ -845,12 +849,11 @@ public class GMLoaderProgram
                 ? string.Join(", ", modificationHistory[scriptName])
                 : "no modifications recorded";
 
-            Log.Error($"An error has occurred on {fileName} while processing {scriptName}\n\n" +
-                     $"Script '{scriptName}' was modified by these files in order: {history}\n\n" +
-                     $"Find string:\n{find}\n\n");
-                     //$"Code string:\n{code}\n\n");
-
-            //Log.Debug($"Exception: \n{e}\n");
+            Log.Warning($"An error has occurred on {fileName} while processing {scriptName}\n\n" +
+                     $"'{scriptName}' was modified by these files in order: {history}\n\n" +
+                     $"Find string:\n{find}\n\n" +
+                     $"Code string:\n{code}\n\n" +
+                     $"Exception: \n{e}\n\n");
         }
     }
 
