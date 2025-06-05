@@ -1,4 +1,13 @@
-GMLoader is a program that can recompile non-YYC GM:Studio games data using [UndertaleModLib](https://github.com/krzys-h/UndertaleModTool).
+### GMLoader for UFO 50
+Intended to be used as an alternative to DeltaPatcher for mod installation. Allows users to install mods to and from any version of UFO 50.
+
+### How To Install Mods
+Modders should provide a zip folder called `mods.zip`. Unzip that and drag the resulting `mods` folder into the GMLoader folder where a mods folder already exists. For the time being, do not install multiple mods at a time unless they are tested to be compatible with each other.
+
+### How To Distribute Mods
+For now, follow the [GMLoader guide for pizza tower](https://github.com/Senjay-id/GMLoader/wiki/Pizza-Tower-Guide).
+
+GMLoader is a program that can recompile non-YYC GameMaker Studio games data using [UndertaleModLib](https://github.com/krzys-h/UndertaleModTool).
 
 ### Features
 * Adding or replacing GML assets by loading the gml files inside GameFolder/mods/code/*.gml
@@ -14,18 +23,3 @@ GMLoader is a program that can recompile non-YYC GM:Studio games data using [Und
 
 ### [Wiki](https://github.com/Senjay-id/GMLoader/wiki)
 Contains User guide and Modders guide
-
-### Building
-* Clone the project
-* Compile [UndertalModLib and Underanalyzer](https://github.com/krzys-h/UndertaleModTool) then put their dll inside the lib folder
-* Add the reference of umtlib and underanalyzer
-* Open the solution and build
-
-### Credits
-[UTMT Team](https://github.com/krzys-h/UndertaleModTool) - All of this isn't possible without the UTMT tool and library
-
-[GMLML](https://github.com/BlurOne-GIT/GML-Mod-Loader) - For the ProofOfConcept Code
-
-Eldoofus - Helping my skill issues
-
-[Crusenho](https://crusenho.itch.io/) - Executable Icon
