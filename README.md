@@ -2,7 +2,11 @@
 Intended to be used as an alternative to DeltaPatcher for mod installation. Allows users to install mods to and from any version of UFO 50.
 
 ### How To Install Mods
-Modders should provide a zip folder called `mods.zip`. Unzip that and drag the resulting `mods` folder into the GMLoader folder where a mods folder already exists. For the time being, do not install multiple mods at a time unless they are tested to be compatible with each other.
+1) Modders should provide a zip folder called `mods.zip`. Unzip that and drag the resulting `mods` folder into the GMLoader folder where a mods folder already exists. For the time being, do not install multiple mods at a time unless they are tested to be compatible with each other.
+
+2) Place the `data.win` from the UFO 50 install folder into the GMLoader folder
+
+3) Once ready to install, just run GMLoader.exe and copy the `data.win` back to the UFO 50 install folder
 
 ### How To Distribute Mods
 For now, follow the [GMLoader guide for pizza tower](https://github.com/Senjay-id/GMLoader/wiki/Pizza-Tower-Guide).
