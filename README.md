@@ -11,8 +11,6 @@ Intended to be used as an alternative to DeltaPatcher for mod installation. Allo
 ### How To Distribute Mods
 For now, follow the [GMLoader guide for pizza tower](https://github.com/Senjay-id/GMLoader/wiki/Pizza-Tower-Guide).
 
-GMLoader is a program that can recompile non-YYC GameMaker Studio games data using [UndertaleModLib](https://github.com/krzys-h/UndertaleModTool).
-
 ### Features
 * Adding or replacing GML assets by loading the gml files inside GameFolder/mods/code/*.gml
 * Adding or replacing textures by loading the texture files inside GameFolder/mods/textures/*.png
