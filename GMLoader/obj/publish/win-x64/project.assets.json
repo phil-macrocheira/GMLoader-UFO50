@@ -2994,11 +2994,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Docto\\Desktop\\GMLoader project\\GMLoader.csproj",
+      "projectUniqueName": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader\\GMLoader.csproj",
       "projectName": "GMLoader",
-      "projectPath": "C:\\Users\\Docto\\Desktop\\GMLoader project\\GMLoader.csproj",
+      "projectPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader\\GMLoader.csproj",
       "packagesPath": "C:\\Users\\Docto\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Docto\\Desktop\\GMLoader project\\obj\\publish\\win-x64\\",
+      "outputPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
