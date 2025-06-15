@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GMLoader")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f828f3a15a3e8aee2477f9cedbc5f3ba94dca1f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f229bd9ab7757eee87194f47780e08812827027a")]
 [assembly: System.Reflection.AssemblyProductAttribute("GMLoader")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GMLoader")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
