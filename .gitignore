@@ -1,3 +1,4 @@
 release
-GMLoader/bin
-GMLoader/.vs
+GMLoader/bin/
+GMLoader/.vs/
+GMLoader/output/
