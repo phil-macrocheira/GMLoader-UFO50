@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GMLoader - Xdelta")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1fdfbba4e2b5ec3f65fed6c8357dc090f28fd0f6")]
 [assembly: System.Reflection.AssemblyProductAttribute("GMLoader - Xdelta")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GMLoader - Xdelta")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

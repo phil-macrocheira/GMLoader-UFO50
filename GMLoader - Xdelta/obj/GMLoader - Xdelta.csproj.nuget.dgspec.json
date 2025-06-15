@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj": {}
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj": {
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
+        "projectUniqueName": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
         "projectName": "GMLoader - Xdelta",
-        "projectPath": "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
+        "projectPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
         "packagesPath": "C:\\Users\\Docto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\obj\\",
+        "outputPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

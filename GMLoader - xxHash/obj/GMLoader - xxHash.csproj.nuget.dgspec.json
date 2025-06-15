@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - xxHash\\GMLoader - xxHash.csproj": {}
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - xxHash\\GMLoader - xxHash.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - xxHash\\GMLoader - xxHash.csproj": {
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - xxHash\\GMLoader - xxHash.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Docto\\Desktop\\GMLoader - xxHash\\GMLoader - xxHash.csproj",
+        "projectUniqueName": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - xxHash\\GMLoader - xxHash.csproj",
         "projectName": "GMLoader - xxHash",
-        "projectPath": "C:\\Users\\Docto\\Desktop\\GMLoader - xxHash\\GMLoader - xxHash.csproj",
+        "projectPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - xxHash\\GMLoader - xxHash.csproj",
         "packagesPath": "C:\\Users\\Docto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Docto\\Desktop\\GMLoader - xxHash\\obj\\",
+        "outputPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - xxHash\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

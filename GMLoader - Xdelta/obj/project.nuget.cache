@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Cg8B2edtZFE=",
+  "dgSpecHash": "YU84BMrQntQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Docto\\Desktop\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
+  "projectFilePath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Xdelta\\GMLoader - Xdelta.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Docto\\.nuget\\packages\\serilog\\4.1.0-dev-02238\\serilog.4.1.0-dev-02238.nupkg.sha512",
     "C:\\Users\\Docto\\.nuget\\packages\\serilog.sinks.console\\6.0.0\\serilog.sinks.console.6.0.0.nupkg.sha512",

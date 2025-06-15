@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - Filediff\\GMLoader - Filediff.csproj": {}
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Filediff\\GMLoader - Filediff.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Docto\\Desktop\\GMLoader - Filediff\\GMLoader - Filediff.csproj": {
+    "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Filediff\\GMLoader - Filediff.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Docto\\Desktop\\GMLoader - Filediff\\GMLoader - Filediff.csproj",
+        "projectUniqueName": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Filediff\\GMLoader - Filediff.csproj",
         "projectName": "GMLoader - Filediff",
-        "projectPath": "C:\\Users\\Docto\\Desktop\\GMLoader - Filediff\\GMLoader - Filediff.csproj",
+        "projectPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Filediff\\GMLoader - Filediff.csproj",
         "packagesPath": "C:\\Users\\Docto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Docto\\Desktop\\GMLoader - Filediff\\obj\\",
+        "outputPath": "C:\\Users\\Docto\\github repos\\GMLoader-UFO50\\GMLoader - Filediff\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
