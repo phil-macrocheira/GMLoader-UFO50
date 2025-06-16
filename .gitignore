@@ -1,4 +1,7 @@
 release
+GMLoader/GMLoader.log
+GMLoader/GMLoader.csproj.user
 GMLoader/bin/
 GMLoader/.vs/
 GMLoader/output/
+GMLoader/Properties/PublishProfiles/FolderProfile.pubxml.user
