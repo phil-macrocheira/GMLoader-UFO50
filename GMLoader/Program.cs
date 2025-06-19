@@ -557,7 +557,6 @@ public class GMLoaderProgram
             else
             {
                 // This should only happen if checkHash is false and backup.win doesn't exists
-                Log.Warning($"Warning, checkHash is false, make sure that you know what your doing. Reading game data from {gameDataPath}");
                 using (var stream = new FileStream(gameDataPath, FileMode.Open, FileAccess.ReadWrite))
                 {
                     Data = UndertaleIO.Read(stream);
