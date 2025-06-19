@@ -1,27 +1,6 @@
 ### GMLoader for UFO 50
-Intended to be used as an alternative to DeltaPatcher for mod installation. Allows users to install mods to and from any version of UFO 50.
+An alternative to DeltaPatcher for UFO 50 mod installation. Allows installing mods to and from any version of UFO 50, the ability to install multiple mods, and comes packaged with a basic modding framework that implements a Modding Settings menu and aims to minimize conflicts between mods.
 
-### How To Install Mods
-1) Modders should provide a zip folder called `mods.zip`. Unzip that and drag the resulting `mods` folder into the GMLoader folder where a mods folder already exists. For the time being, do not install multiple mods at a time unless they are tested to be compatible with each other.
+Full guide for installing and creating mods here: [https://docs.google.com/document/d/1IuJDFtSu4Y9JNFPkGjgTqFI-raKqNtWWQy_v2oomXhQ](https://docs.google.com/document/d/1IuJDFtSu4Y9JNFPkGjgTqFI-raKqNtWWQy_v2oomXhQ)
 
-2) Place the `data.win` from the UFO 50 install folder into the GMLoader folder
-
-3) Once ready to install, just run GMLoader.exe and copy the `data.win` back to the UFO 50 install folder
-
-### How To Distribute Mods
-For now, follow the [GMLoader guide for pizza tower](https://github.com/Senjay-id/GMLoader/wiki/Pizza-Tower-Guide).
-
-### Features
-* Adding or replacing GML assets by loading the gml files inside GameFolder/mods/code/*.gml
-* Adding or replacing textures by loading the texture files inside GameFolder/mods/textures/*.png
-* Manipulate sprite properties by making sprite configuration files inside GameFolder/mods/config/textures_properties/*.yaml
-* Append GML code by importing the gml files inside GameFolder/mods/code/appendgml/Any Folder Name/*.gml
-* Prepend GML code by importing the gml files inside GameFolder/mods/code/prependgml/Any Folder Name/*.gml
-* Existing GameObjects Manipulation by loading configuration files inside GameFolder/mods/config/existing_object/*.json
-* Add and Manipulate new GameObjects by loading configuration files inside GameFolder/mods/config/new_object/*.json
-* Import shaders by loading exported shader files inside GameFolder/mods/shader/*any_shader_folder
-* Import rooms by loading the room files inside GameFolder/mods/room/*.json
-* Load your own custom CSharp Script files inside GameFolder/csx/pre/*.csx or GameFolder/csx/post/*.csx
-
-### [Wiki](https://github.com/Senjay-id/GMLoader/wiki)
-Contains User guide and Modders guide
+Credit to Senjay for creating [GMLoader](https://github.com/Senjay-id/GMLoader)
