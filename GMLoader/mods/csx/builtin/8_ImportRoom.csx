@@ -461,6 +461,8 @@ void ReadAssetsLayer(ref Utf8JsonReader reader, UndertaleRoom.Layer newLayer)
     newLayerData.Sprites = new UndertalePointerList<UndertaleRoom.SpriteInstance>();
     newLayerData.Sequences = new UndertalePointerList<UndertaleRoom.SequenceInstance>();
     newLayerData.NineSlices = new UndertalePointerList<UndertaleRoom.SpriteInstance>();
+    newLayerData.ParticleSystems = new UndertalePointerList<UndertaleRoom.ParticleSystemInstance>();
+    newLayerData.TextItems = new UndertalePointerList<UndertaleRoom.TextItemInstance>();
 
     while (reader.Read())
     {
