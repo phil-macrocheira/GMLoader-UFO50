@@ -651,7 +651,7 @@ public class GMLoaderProgram
                     Log.Information("Loading CSX Scripts after compilation.");
                     foreach (string file in dirAfterCSXFiles)
                     {
-                        RunCSharpFile(file);
+                        RunCSharpFile(file).GetAwaiter().GetResult();
                     }
                 }
                 else
@@ -1221,15 +1221,15 @@ public class GMLoaderProgram
         invalidSpriteSize = 0;
 
         if (exportTexture)
-            RunCSharpFile(exportTextureScriptPath);
+            RunCSharpFile(exportTextureScriptPath).GetAwaiter().GetResult();
         if (exportGameObject)
-            RunCSharpFile(exportGameObjectScriptPath);
+            RunCSharpFile(exportGameObjectScriptPath).GetAwaiter().GetResult();
         if (exportAudio)
-            RunCSharpFile(exportAudioScriptPath);
+            RunCSharpFile(exportAudioScriptPath).GetAwaiter().GetResult();
         if (exportCode)
-            RunCSharpFile(exportCodeScriptPath);
+            RunCSharpFile(exportCodeScriptPath).GetAwaiter().GetResult();
         if (exportRoom)
-            RunCSharpFile(exportRoomScriptPath);
+            RunCSharpFile(exportRoomScriptPath).GetAwaiter().GetResult();
 
         if (!exportGameObject && !exportCode && !exportTexture && !exportAudio && !exportRoom)
         {
@@ -1361,7 +1361,7 @@ public class GMLoaderProgram
                 Log.Information("Loading pre-CSX Scripts.");
                 foreach (string file in preCSXFiles)
                 {
-                    RunCSharpFile(file);
+                    RunCSharpFile(file).GetAwaiter().GetResult();
                 }
             }
             else
@@ -1385,10 +1385,10 @@ public class GMLoaderProgram
             {
                 Log.Information("Loading builtin-CSX scripts.");
                 // Had to be done on GMLoader's side because of VYaml issues
-                importGraphic();
+                importGraphic().GetAwaiter().GetResult();
                 foreach (string file in builtInCSXFiles)
                 {
-                    RunCSharpFile(file);
+                    RunCSharpFile(file).GetAwaiter().GetResult();
                 }
             }
             else
@@ -1415,7 +1415,7 @@ public class GMLoaderProgram
                 Log.Information("Loading post-CSX Scripts.");
                 foreach (string file in postCSXFiles)
                 {
-                    RunCSharpFile(file);
+                    RunCSharpFile(file).GetAwaiter().GetResult();
                 }
             }
             else
@@ -1767,6 +1767,18 @@ public class GMLoaderProgram
         await RunCSharpCode(lines, ScriptPath);
     }
 
+    public class Program
+    {
+        public string FilePath { get; set; }
+
+    }
+    public static void ScriptMessage(string message) { Log.Information(message); }
+    public static void SetProgressBar(string message, string status, double currentValue, double maxValue) { }
+    public static void IncrementProgressParallel() { }
+    public static void SyncBinding(string resourceType, bool enable) { }
+    public static void DisableAllSyncBindings() { }
+    public static void EnsureDataLoaded() { }
+
     private static async Task RunCSharpCode(string code, string scriptFile = null)
     {
         Log.Information($"Attempting to execute '{Path.GetFileName(scriptFile)}'");
@@ -1774,7 +1786,7 @@ public class GMLoaderProgram
         var ScriptExecutionSuccess = false;
         try
         {
-            await CSharpScript.EvaluateAsync(code, CliScriptOptions);
+            await CSharpScript.EvaluateAsync(code, CliScriptOptions.WithFilePath(Path.GetFullPath(scriptFile ?? "")).WithFileEncoding(Encoding.UTF8), new Program() { FilePath = gameDataPath }, typeof(Program));
             ScriptExecutionSuccess = true;
             ScriptErrorMessage = "";
         }
@@ -1809,7 +1821,9 @@ public class GMLoaderProgram
             typeof(Newtonsoft.Json.Linq.JObject).GetTypeInfo().Assembly,
             typeof(Newtonsoft.Json.JsonConvert).GetTypeInfo().Assembly,
             typeof(System.Text.Json.JsonSerializer).GetTypeInfo().Assembly,
-            typeof(VYaml.Serialization.YamlSerializer).GetTypeInfo().Assembly
+            typeof(VYaml.Serialization.YamlSerializer).GetTypeInfo().Assembly,
+            typeof(Serilog.Log).Assembly,
+            typeof(xdelta3.net.Xdelta3Lib).Assembly,
         };
 
         CliScriptOptions = ScriptOptions.Default
