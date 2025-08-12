@@ -784,6 +784,28 @@ public class GMLoaderProgram
             case "findreplacetrim":
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code, caseSensitive);
                 break;
+            case "findappend":
+                if (string.IsNullOrEmpty(find))
+                {
+                    Log.Error($"Find pattern is empty for {scriptName}, skipping");
+                    return;
+                }
+                importGroup.QueueFindReplace(scriptName, find, find + Environment.NewLine + code, caseSensitive);
+                break;
+            case "findprepend":
+                if (string.IsNullOrEmpty(find))
+                {
+                    Log.Error($"Find pattern is empty for {scriptName}, skipping");
+                    return;
+                }
+                importGroup.QueueFindReplace(scriptName, find, code + Environment.NewLine + find, caseSensitive);
+                break;
+            case "findappendtrim":
+                importGroup.QueueTrimmedLinesFindReplace(scriptName, find, find + Environment.NewLine + code, caseSensitive);
+                break;
+            case "findprependtrim":
+                importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code + Environment.NewLine + find, caseSensitive);
+                break;
             case "append":
                 importGroup.QueueAppend(scriptName, code);
                 break;

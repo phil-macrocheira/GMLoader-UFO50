@@ -5,3 +5,5 @@ GMLoader/bin/
 GMLoader/.vs/
 GMLoader/output/
 GMLoader/Properties/PublishProfiles/FolderProfile.pubxml.user
+GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfo.cs
+GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfoInputs.cache
