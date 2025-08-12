@@ -7,3 +7,7 @@ GMLoader/output/
 GMLoader/Properties/PublishProfiles/FolderProfile.pubxml.user
 GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfo.cs
 GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfoInputs.cache
+GMLoader/obj/project.assets.json
+GMLoader/obj/project.nuget.cache
+GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfoInputs.cache
+GMLoader/obj/Debug/net8.0/GMLoader.AssemblyInfo.cs
