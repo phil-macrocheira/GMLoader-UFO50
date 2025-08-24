@@ -164,34 +164,30 @@ try
                     }
                 }
 
-                if (spriteType == SpriteType.Background)
-                {
+                if (spriteType == SpriteType.Background) {
                     string bgSpriteName = stripped;
-                    
-                    if (backgroundDictionary.TryGetValue(bgSpriteName, out BackgroundData bgProps))
-                        {
-                            bgTransparent = bgProps.yml_transparent.Value;
-                            bgSmooth = bgProps.yml_smooth.Value;
-                            bgPreload = bgProps.yml_preload.Value;
-                            tileWidth = bgProps.yml_tile_width.Value;
-                            tileHeight = bgProps.yml_tile_height.Value;
-                            borderX = bgProps.yml_border_x.Value;
-                            borderY = bgProps.yml_border_y.Value;
-                            tileColumn = bgProps.yml_tile_column.Value;
-                            itemOrFramePerTile = bgProps.yml_item_per_tile.Value;
-                            tileCount = bgProps.yml_tile_count.Value;
-                            //frameTime = bgProps.yml_frametime.Value;
-                            //Log.Information($"{bgSpriteName} tile_count: {bgProps.yml_tile_count.Value} tile_width: {bgProps.yml_tile_width.Value}");
-                        }
-                    else
-                    {
+
+                    if (backgroundDictionary.TryGetValue(bgSpriteName, out BackgroundData bgProps)) {
+                        bgTransparent = bgProps.yml_transparent.Value;
+                        bgSmooth = bgProps.yml_smooth.Value;
+                        bgPreload = bgProps.yml_preload.Value;
+                        tileWidth = bgProps.yml_tile_width.Value;
+                        tileHeight = bgProps.yml_tile_height.Value;
+                        borderX = bgProps.yml_border_x.Value;
+                        borderY = bgProps.yml_border_y.Value;
+                        tileColumn = bgProps.yml_tile_column.Value;
+                        itemOrFramePerTile = bgProps.yml_item_per_tile.Value;
+                        tileCount = bgProps.yml_tile_count.Value;
+                        //frameTime = bgProps.yml_frametime.Value;
+                        //Log.Information($"{bgSpriteName} tile_count: {bgProps.yml_tile_count.Value} tile_width: {bgProps.yml_tile_width.Value}");
+                    }
+                    else {
                         Log.Information($"No sprite properties found for {bgSpriteName}, using default .ini settings");
                     }
 
                     UndertaleBackground background = Data.Backgrounds.ByName(stripped);
 
-                    if (background != null)
-                    {
+                    if (background != null) {
                         background.Transparent = bgTransparent;
                         background.Smooth = bgSmooth;
                         background.Preload = bgPreload;
@@ -205,8 +201,7 @@ try
                         background.GMS2FrameLength = frameTime;
                         background.Texture = texturePageItem;
                     }
-                    else
-                    {
+                    else {
                         // No background found, let's make one
                         UndertaleString backgroundUTString = Data.Strings.MakeString(bgSpriteName);
                         UndertaleBackground newBackground = new UndertaleBackground();
@@ -223,8 +218,7 @@ try
                         newBackground.GMS2TileCount = tileCount;
                         newBackground.GMS2FrameLength = frameTime;
                         newBackground.Texture = texturePageItem;
-                        for (uint i = 0; i < tileCount; i++)
-                        {
+                        for (uint i = 0; i < tileCount; i++) {
                             newBackground.GMS2TileIds.Add(new UndertaleBackground.TileID
                             {
                                 ID = (uint)i
@@ -233,33 +227,28 @@ try
                         Data.Backgrounds.Add(newBackground);
                     }
                 }
-                else if (spriteType == SpriteType.Sprite)
-                {
+                else if (spriteType == SpriteType.Sprite) {
                     // Get sprite to add this texture to
                     string spriteName;
                     int lastUnderscore = stripped.LastIndexOf('_');
-				    int frame = 0;
+                    int frame = 0;
 
                     spriteName = stripped.Substring(0, lastUnderscore);
-                    if (Int32.TryParse(stripped.Substring(lastUnderscore + 1), out int parsedFrame))
-                    {
+                    if (Int32.TryParse(stripped.Substring(lastUnderscore + 1), out int parsedFrame)) {
                         frame = parsedFrame;
                     }
-                    else
-                    {
+                    else {
                         spriteName = stripped;
                         frame = 0;
                         Log.Debug("Image " + stripped + " has an invalid frame number, assigning the frame to 0");
                     }
 
-                    if (isSubimages)
-                    {
+                    if (isSubimages) {
                         // the sprite is intended to be imported as subimages, only show debug.
                         Log.Debug($"{spriteName} will be imported using default .ini settings");
                         spriteName = Path.GetFileName(Path.GetDirectoryName(n.Texture.Source));
                     }
-                    else if (spriteDictionary.TryGetValue(spriteName, out SpriteData spriteProps))
-                    {
+                    else if (spriteDictionary.TryGetValue(spriteName, out SpriteData spriteProps)) {
                         xCoordinate = spriteProps.yml_x.Value;
                         yCoordinate = spriteProps.yml_y.Value;
                         speedType = spriteProps.yml_speedtype.Value;
@@ -274,13 +263,11 @@ try
                         preload = spriteProps.yml_preload.Value;
                         //Log.Information($"{spriteName} x: {spriteProps.yml_x.Value} y: {spriteProps.yml_y.Value}");
                     }
-                    else
-                    {
+                    else {
                         Log.Information($"No sprite properties found for {spriteName}, using default .ini settings");
                     }
 
-                    if (spritesStartAt1.Contains(spriteName))
-                    {
+                    if (spritesStartAt1.Contains(spriteName)) {
                         frame--;
                     }
 
@@ -290,8 +277,7 @@ try
 
                     // Set values for new sprites
                     UndertaleSprite sprite = Data.Sprites.ByName(spriteName);
-                    if (sprite is null)
-                    {
+                    if (sprite is null) {
                         UndertaleString spriteUTString = Data.Strings.MakeString(spriteName);
                         UndertaleSprite newSprite = new UndertaleSprite();
                         newSprite.Name = spriteUTString;
@@ -300,17 +286,16 @@ try
                         newSprite.MarginLeft = n.Texture.TargetX;
                         newSprite.MarginRight = n.Texture.TargetX + n.Bounds.Width - 1;
                         newSprite.MarginTop = n.Texture.TargetY;
-                        newSprite.MarginBottom = n.Texture.TargetY + n.Bounds.Height - 1;                        
+                        newSprite.MarginBottom = n.Texture.TargetY + n.Bounds.Height - 1;
                         newSprite.OriginX = xCoordinate;
-					    newSprite.OriginY = yCoordinate;
+                        newSprite.OriginY = yCoordinate;
                         newSprite.BBoxMode = boundingBoxType;
-                        if (boundingBoxType == 2)
-                        {
+                        if (boundingBoxType == 2) {
                             newSprite.MarginLeft = leftCollision;
                             newSprite.MarginRight = rightCollision;
                             newSprite.MarginTop = topCollision;
                             newSprite.MarginBottom = bottomCollision;
-                        }                        
+                        }
                         newSprite.GMS2PlaybackSpeedType = (AnimSpeedType)speedType;
                         newSprite.GMS2PlaybackSpeed = frameSpeed;
                         newSprite.IsSpecialType = isSpecial;
@@ -319,16 +304,14 @@ try
                         newSprite.Transparent = transparent;
                         newSprite.Smooth = smooth;
                         newSprite.Preload = preload;
-                        if (frame > 0)
-                        {
+                        if (frame > 0) {
                             for (int i = 0; i < frame; i++)
                                 newSprite.Textures.Add(null);
                         }
 
                         // Only generate collision masks for sprites that need them (in newer GameMaker versions)
                         if (!noMasksForBasicRectangles ||
-                            newSprite.SepMasks is not (UndertaleSprite.SepMaskType.AxisAlignedRect or UndertaleSprite.SepMaskType.RotatedRect))
-                        {
+                            newSprite.SepMasks is not (UndertaleSprite.SepMaskType.AxisAlignedRect or UndertaleSprite.SepMaskType.RotatedRect)) {
                             // Generate mask later (when the current atlas is about to be unloaded)
                             maskNodes.Add(newSprite, n);
                         }
@@ -338,49 +321,46 @@ try
                         continue;
                     }
 
-                // Replacing existing sprite part
+                    // Replacing existing sprite part
 
-                    if (isSubimages)
-                    {
+                    if (isSubimages) {
                         int textureCount = sprite.Textures.Count;
                         frame = ExtractSecondToLastNumber(stripped) ?? 0;
                     }
-                    else if (frame > sprite.Textures.Count - 1)
-                    {
-                        while (frame > sprite.Textures.Count - 1)
-                        {
+                    else if (frame > sprite.Textures.Count - 1) {
+                        while (frame > sprite.Textures.Count - 1) {
                             sprite.Textures.Add(texentry);
                         }
                         continue;
                     }
 
-                    if (frame > sprite.Textures.Count - 1)
-                    {
+                    if (frame > sprite.Textures.Count - 1) {
                         sprite.Textures.Add(texentry);
                     }
 
                     sprite.Textures[frame] = texentry;
 
-                    sprite.OriginX = xCoordinate;
-                    sprite.OriginY = yCoordinate;
-                    sprite.BBoxMode = boundingBoxType;
+                    if (!isSubimages) {
+                        sprite.OriginX = xCoordinate;
+                        sprite.OriginY = yCoordinate;
+                        sprite.BBoxMode = boundingBoxType;
 
-                    if (boundingBoxType == 2)
-                    {
-                        sprite.MarginLeft = leftCollision;
-                        sprite.MarginRight = rightCollision;
-                        sprite.MarginTop = topCollision;
-                        sprite.MarginBottom = bottomCollision;
+                        if (boundingBoxType == 2) {
+                            sprite.MarginLeft = leftCollision;
+                            sprite.MarginRight = rightCollision;
+                            sprite.MarginTop = topCollision;
+                            sprite.MarginBottom = bottomCollision;
+                        }
+
+                        sprite.GMS2PlaybackSpeedType = (AnimSpeedType)speedType;
+                        sprite.GMS2PlaybackSpeed = frameSpeed;
+                        sprite.IsSpecialType = isSpecial;
+                        sprite.SVersion = specialVer;
+                        sprite.SepMasks = (UndertaleSprite.SepMaskType)sepMaskType;
+                        sprite.Transparent = transparent;
+                        sprite.Smooth = smooth;
+                        sprite.Preload = preload;
                     }
-
-                    sprite.GMS2PlaybackSpeedType = (AnimSpeedType)speedType;
-                    sprite.GMS2PlaybackSpeed = frameSpeed;
-                    sprite.IsSpecialType = isSpecial;
-                    sprite.SVersion = specialVer;
-                    sprite.SepMasks = (UndertaleSprite.SepMaskType)sepMaskType;
-                    sprite.Transparent = transparent;
-                    sprite.Smooth = smooth;
-                    sprite.Preload = preload;
 
                     // Update sprite dimensions
                     uint oldWidth = sprite.Width, oldHeight = sprite.Height;
