@@ -31,6 +31,7 @@ using VYaml.Annotations;
 using UndertaleModLib.Compiler;
 using Microsoft.CodeAnalysis;
 using System.Collections.Concurrent;
+using System.IO;
 #endregion
 
 namespace GMLoader;
@@ -85,6 +86,8 @@ public interface IConfig
     public string NoStripTexturesDirectory { get; }
     public string TexturesConfigDirectory { get; }
     public string BackgroundsConfigDirectory { get; }
+    public string AudioDirectory { get; }
+    public string AudioConfigDirectory { get; }
     public string ShaderDirectory { get; }
     public string ConfigDirectory { get; }
     public string GMLCodeDirectory { get; }
@@ -131,6 +134,15 @@ public interface IConfig
     public uint DefaultBGItemOrFramePerTile { get; }
     public uint DefaultBGTileCount { get; }
     public int DefaultBGFrameTime { get; }
+    public string DefaultAudioType { get; }
+    public bool DefaultAudioEmbedded { get; }
+    public bool DefaultAudioCompressed { get; }
+    public uint DefaultAudioEffects { get; }
+    public float DefaultAudioVolume { get; }
+    public float DefaultAudioPitch { get; }
+    public int DefaultAudioGroupIndex { get; }
+    public int DefaultAudioFileID { get; }
+    public bool DefaultAudioPreload { get; }
 }
 
 [YamlObject]
@@ -177,7 +189,7 @@ public partial class SpriteData
     public uint? yml_speedtype { get; set; }   
 
     [YamlMember("frame_speed")]
-    public float? yml_framespeed { get; set; } // Nullable float
+    public float? yml_framespeed { get; set; }
 
     [YamlMember("bounding_box_type")]
     public uint? yml_boundingboxtype { get; set; }  
@@ -223,6 +235,29 @@ public partial class BackgroundData
     public bool? yml_preload { get; set; }     
     [YamlMember("frametime")]
     public long? yml_frametime { get; set; }     
+}
+
+[YamlObject]
+public partial class AudioData
+{
+    [YamlMember("type")]
+    public string? yml_type { get; set; }
+    [YamlMember("embedded")]
+    public bool? yml_embedded { get; set; }
+    [YamlMember("compressed")]
+    public bool? yml_compressed { get; set; }
+    [YamlMember("effects")]
+    public uint? yml_effects { get; set; }
+    [YamlMember("volume")]
+    public float? yml_volume { get; set; }
+    [YamlMember("pitch")]
+    public float? yml_pitch { get; set; }
+    [YamlMember("audiogroup_index")]
+    public int? yml_audiogroup_index { get; set; }
+    [YamlMember("audiofile_id")]
+    public int? yml_audiofile_id { get; set; }
+    [YamlMember("preload")]
+    public bool? yml_preload { get; set; }
 }
 
 public class GMLoaderProgram
@@ -294,6 +329,8 @@ public class GMLoaderProgram
     public static string texturesConfigPath { get; set; }
     public static string noStripTexturesPath { get; set; }
     public static string backgroundsConfigPath { get; set; }
+    public static string audioPath { get; set; }
+    public static string audioConfigPath { get; set; }
     public static string shaderPath { get; set; }
     public static string configPath { get; set; }
     public static DecompileSettings defaultDecompSettings { get; set; }
@@ -334,6 +371,15 @@ public class GMLoaderProgram
     public static uint defaultBGItemOrFramePerTile { get; set; }
     public static uint defaultBGTileCount { get; set; }
     public static int defaultBGFrameTime { get; set; }
+    public static string defaultAudioType { get; set; }
+    public static bool defaultAudioEmbedded { get; set; }
+    public static bool defaultAudioCompressed { get; set; }
+    public static uint defaultAudioEffects { get; set; }
+    public static float defaultAudioVolume { get; set; }
+    public static float defaultAudioPitch { get; set; }
+    public static int defaultAudioGroupIndex { get; set; }
+    public static int defaultAudioFileID { get; set; }
+    public static bool defaultAudioPreload { get; set; }
 
     public static Dictionary<string, int> moddedTextureCounts = new Dictionary<string, int>();
     public static List<string> vanillaSpriteList = new List<string>();
@@ -345,6 +391,10 @@ public class GMLoaderProgram
     public static string[] noStripStyleSpritesToImport;
     public static string[] backgroundsToImport;
 
+    public static List<string> audioList = new List<string>();
+    public static string[] audioToImport;
+    public static Dictionary<string, AudioData> audioDictionary = new Dictionary<string, AudioData>();
+
     #endregion
 
     static void Main(string[] args)
@@ -353,9 +403,10 @@ public class GMLoaderProgram
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            string logFile = "GMLoader.log";
-            string configFile = "GMLoader.ini";
-            
+            string baseDir = AppContext.BaseDirectory;
+            string logFile = Path.Combine(baseDir, "GMLoader.log");
+            string configFile = Path.Combine(baseDir, "GMLoader.ini");
+
             if (File.Exists(logFile))
                 File.Delete(logFile);
 
@@ -369,7 +420,7 @@ public class GMLoaderProgram
 
             if (!File.Exists(configFile))
             {
-                Log.Information("Missing GMLoader.ini file \n\n\nPress any key to close...");
+                Log.Information($"Missing GMLoader.ini while trying to find it on {logFile}\n\n\nPress any key to close...");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
@@ -435,6 +486,8 @@ public class GMLoaderProgram
             noStripTexturesPath = config.NoStripTexturesDirectory;
             texturesConfigPath = config.TexturesConfigDirectory;
             backgroundsConfigPath = config.BackgroundsConfigDirectory;
+            audioPath = config.AudioDirectory;
+            audioConfigPath = config.AudioConfigDirectory;
             shaderPath = config.ShaderDirectory;
             configPath = config.ConfigDirectory;
             gmlCodePath = config.GMLCodeDirectory;
@@ -474,6 +527,16 @@ public class GMLoaderProgram
             defaultBGItemOrFramePerTile = config.DefaultBGItemOrFramePerTile;
             defaultBGTileCount = config.DefaultBGTileCount;
             defaultBGFrameTime = config.DefaultBGFrameTime;
+
+            defaultAudioType = config.DefaultAudioType;
+            defaultAudioEmbedded = config.DefaultAudioEmbedded;
+            defaultAudioCompressed = config.DefaultAudioCompressed;
+            defaultAudioEffects = config.DefaultAudioEffects;
+            defaultAudioVolume = config.DefaultAudioVolume;
+            defaultAudioPitch = config.DefaultAudioPitch;
+            defaultAudioGroupIndex = config.DefaultAudioGroupIndex;
+            defaultAudioFileID = config.DefaultAudioFileID;
+            defaultAudioPreload = config.DefaultAudioPreload;
             #endregion
 
             textureExclusionList = textureExclusion.Split(',').ToList();
@@ -481,6 +544,8 @@ public class GMLoaderProgram
             mkDir(modsPath);
             mkDir(texturesPath);
             mkDir(texturesConfigPath);
+            mkDir(audioPath);
+            mkDir(audioConfigPath);
             mkDir(gmlCodePath);
             mkDir(gmlCodePatchPath);
             mkDir(noStripTexturesPath);
@@ -598,6 +663,8 @@ public class GMLoaderProgram
             }
             else
             {
+                // This should only happen if checkHash is false and backup.win doesn't exists
+                Log.Warning($"Warning, checkHash is false, make sure that you know what your doing. Reading game data from {gameDataPath}");
                 using (var stream = new FileStream(gameDataPath, FileMode.Open, FileAccess.ReadWrite))
                 {
                     Data = UndertaleIO.Read(stream);
@@ -651,7 +718,7 @@ public class GMLoaderProgram
                     Log.Information("Loading CSX Scripts after compilation.");
                     foreach (string file in dirAfterCSXFiles)
                     {
-                        RunCSharpFile(file).GetAwaiter().GetResult();
+                        RunCSharpFile(file);
                     }
                 }
                 else
@@ -784,6 +851,12 @@ public class GMLoaderProgram
             case "findreplacetrim":
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code, caseSensitive);
                 break;
+            case "append":
+                importGroup.QueueAppend(scriptName, code);
+                break;
+            case "prepend":
+                importGroup.QueuePrepend(scriptName, code);
+                break;
             case "findappend":
                 if (string.IsNullOrEmpty(find))
                 {
@@ -805,12 +878,6 @@ public class GMLoaderProgram
                 break;
             case "findprependtrim":
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code + Environment.NewLine + find, caseSensitive);
-                break;
-            case "append":
-                importGroup.QueueAppend(scriptName, code);
-                break;
-            case "prepend":
-                importGroup.QueuePrepend(scriptName, code);
                 break;
             case "findreplaceregex":
                 if (string.IsNullOrEmpty(find))
@@ -873,7 +940,7 @@ public class GMLoaderProgram
         string[] spriteStripStyleConfigFiles = await spriteStripStyleConfigFilesTask;
         string[] backgroundConfigFIles = await backgroundConfigFilesTask;
 
-        if (spriteConfigFIles.Length == 0 && backgroundConfigFIles.Length == 0)
+        if (spriteConfigFIles.Length == 0 && backgroundConfigFIles.Length == 0 && spriteStripStyleConfigFiles.Length == 0)
         {
             Log.Debug($"The sprite and background configuration files are empty, at {texturesConfigPath}, skipping texture import");
             return;
@@ -993,13 +1060,13 @@ public class GMLoaderProgram
 
             await Parallel.ForEachAsync(spriteStripStyleConfigFiles, parallelOptions, async (file, cancellationToken) =>
             {
+
                 byte[] yamlBytes = await File.ReadAllBytesAsync(file);
-                Log.Information($"Deserializing {Path.GetFileName(file)}");
+                Log.Information($"Deserializing {Path.GetFileName(file)} ({Path.GetFileName(Path.GetDirectoryName(file))})");
                 var deserialized = YamlSerializer.Deserialize<SpriteData>(yamlBytes);
-                string spriteName = Path.GetDirectoryName(file);
+                string spriteName = Path.GetFileName(Path.GetDirectoryName(file));
 
                 localSpriteList.Add(spriteName);
-
                 localSpriteDictionary[spriteName] = new SpriteData
                 {
                     yml_x = deserialized.yml_x ?? defaultSpriteX,
@@ -1027,6 +1094,80 @@ public class GMLoaderProgram
         }
 
         Console.Title = $"GMLoader - {Data.GeneralInfo.Name.Content}";
+    }
+
+    private static async Task importAudio()
+    {
+        audioDictionary.Clear();
+        audioList.Clear();
+
+        var AudioConfigFilesTask = Task.Run(() =>
+            Directory.GetFiles(audioConfigPath, "*.yaml", SearchOption.TopDirectoryOnly)
+                .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
+                .ToArray());
+
+        await Task.WhenAll(AudioConfigFilesTask);
+        string[] audioConfigFiles = await AudioConfigFilesTask;
+
+        if (audioConfigFiles.Length == 0)
+        {
+            Log.Debug($"The audio configuration files are empty, at {audioConfigPath}, skipping audio import");
+            return;
+        }
+
+        Log.Information("Executing built-in ImportAudio");
+
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
+
+        if (audioConfigFiles.Length != 0)
+        {
+            var audioFilenames = new ConcurrentBag<string>();
+            var localAudioList = new ConcurrentBag<string>();
+            var localAudioDictionary = new ConcurrentDictionary<string, AudioData>();
+
+            Log.Information("Deserializing audio configuration files...");
+            Console.Title = $"GMLoader - Deserializing audio configuration files";
+
+            await Parallel.ForEachAsync(audioConfigFiles, parallelOptions, async (file, cancellationToken) =>
+            {
+                byte[] yamlBytes = await File.ReadAllBytesAsync(file);
+                Log.Information($"Deserializing {Path.GetFileName(file)}");
+                var deserialized = YamlSerializer.Deserialize<Dictionary<string, AudioData>>(yamlBytes);
+
+                foreach (var (audioname, configs) in deserialized)
+                {
+                    audioFilenames.Add(audioname); // plus extensionname
+                    localAudioList.Add(audioname);
+
+                    localAudioDictionary[audioname] = new AudioData
+                    {
+                        yml_type = configs.yml_type ?? defaultAudioType,
+                        yml_embedded = configs.yml_embedded ?? defaultAudioEmbedded,
+                        yml_compressed = configs.yml_compressed ?? defaultAudioCompressed,
+                        yml_effects = configs.yml_effects ?? defaultAudioEffects,
+                        yml_volume = configs.yml_volume ?? defaultAudioVolume,
+                        yml_pitch = configs.yml_pitch ?? defaultAudioPitch,
+                        yml_audiogroup_index = configs.yml_audiogroup_index ?? defaultAudioGroupIndex,
+                        yml_audiofile_id = configs.yml_audiofile_id ?? defaultAudioFileID,
+                        yml_preload = configs.yml_preload ?? defaultAudioPreload
+                    };
+                }
+            });
+
+            audioList.AddRange(localAudioList);
+            audioToImport = audioFilenames.ToArray();
+            foreach (var kvp in localAudioDictionary) audioDictionary[kvp.Key] = kvp.Value;
+        }
+        else
+        {
+            Log.Debug($"The audio configuration files are empty at {audioConfigPath}, skipping...");
+        }
+
+        Console.Title = $"GMLoader - {Data.GeneralInfo.Name.Content}";
+
     }
 
     #region Helper Methods
@@ -1243,15 +1384,15 @@ public class GMLoaderProgram
         invalidSpriteSize = 0;
 
         if (exportTexture)
-            RunCSharpFile(exportTextureScriptPath).GetAwaiter().GetResult();
+            RunCSharpFile(exportTextureScriptPath);
         if (exportGameObject)
-            RunCSharpFile(exportGameObjectScriptPath).GetAwaiter().GetResult();
+            RunCSharpFile(exportGameObjectScriptPath);
         if (exportAudio)
-            RunCSharpFile(exportAudioScriptPath).GetAwaiter().GetResult();
+            RunCSharpFile(exportAudioScriptPath);
         if (exportCode)
-            RunCSharpFile(exportCodeScriptPath).GetAwaiter().GetResult();
+            RunCSharpFile(exportCodeScriptPath);
         if (exportRoom)
-            RunCSharpFile(exportRoomScriptPath).GetAwaiter().GetResult();
+            RunCSharpFile(exportRoomScriptPath);
 
         if (!exportGameObject && !exportCode && !exportTexture && !exportAudio && !exportRoom)
         {
@@ -1383,7 +1524,7 @@ public class GMLoaderProgram
                 Log.Information("Loading pre-CSX Scripts.");
                 foreach (string file in preCSXFiles)
                 {
-                    RunCSharpFile(file).GetAwaiter().GetResult();
+                    RunCSharpFile(file);
                 }
             }
             else
@@ -1406,11 +1547,13 @@ public class GMLoaderProgram
             if (compileBuiltInCSX)
             {
                 Log.Information("Loading builtin-CSX scripts.");
-                // Had to be done on GMLoader's side because of VYaml issues
-                importGraphic().GetAwaiter().GetResult();
+                
+                importGraphic();    // Had to be done on GMLoader's side because of VYaml issues
+                importAudio();      // same
+
                 foreach (string file in builtInCSXFiles)
                 {
-                    RunCSharpFile(file).GetAwaiter().GetResult();
+                    RunCSharpFile(file);
                 }
             }
             else
@@ -1437,7 +1580,7 @@ public class GMLoaderProgram
                 Log.Information("Loading post-CSX Scripts.");
                 foreach (string file in postCSXFiles)
                 {
-                    RunCSharpFile(file).GetAwaiter().GetResult();
+                    RunCSharpFile(file);
                 }
             }
             else
@@ -1789,18 +1932,6 @@ public class GMLoaderProgram
         await RunCSharpCode(lines, ScriptPath);
     }
 
-    public class Program
-    {
-        public string FilePath { get; set; }
-
-    }
-    public static void ScriptMessage(string message) { Log.Information(message); }
-    public static void SetProgressBar(string message, string status, double currentValue, double maxValue) { }
-    public static void IncrementProgressParallel() { }
-    public static void SyncBinding(string resourceType, bool enable) { }
-    public static void DisableAllSyncBindings() { }
-    public static void EnsureDataLoaded() { }
-
     private static async Task RunCSharpCode(string code, string scriptFile = null)
     {
         Log.Information($"Attempting to execute '{Path.GetFileName(scriptFile)}'");
@@ -1808,7 +1939,7 @@ public class GMLoaderProgram
         var ScriptExecutionSuccess = false;
         try
         {
-            await CSharpScript.EvaluateAsync(code, CliScriptOptions.WithFilePath(Path.GetFullPath(scriptFile ?? "")).WithFileEncoding(Encoding.UTF8), new Program() { FilePath = gameDataPath }, typeof(Program));
+            await CSharpScript.EvaluateAsync(code, CliScriptOptions);
             ScriptExecutionSuccess = true;
             ScriptErrorMessage = "";
         }
@@ -1843,9 +1974,7 @@ public class GMLoaderProgram
             typeof(Newtonsoft.Json.Linq.JObject).GetTypeInfo().Assembly,
             typeof(Newtonsoft.Json.JsonConvert).GetTypeInfo().Assembly,
             typeof(System.Text.Json.JsonSerializer).GetTypeInfo().Assembly,
-            typeof(VYaml.Serialization.YamlSerializer).GetTypeInfo().Assembly,
-            typeof(Serilog.Log).Assembly,
-            typeof(xdelta3.net.Xdelta3Lib).Assembly,
+            typeof(VYaml.Serialization.YamlSerializer).GetTypeInfo().Assembly
         };
 
         CliScriptOptions = ScriptOptions.Default
