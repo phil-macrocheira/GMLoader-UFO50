@@ -105,6 +105,7 @@ foreach (var audioEntry in audioDictionary)
     }
 
     // Update external audio group file if required.
+    /*
     if (_embedded && _audiogroup_index != 0)
     {
         // Load audiogroup into memory.
@@ -136,6 +137,7 @@ foreach (var audioEntry in audioDictionary)
         using FileStream audioGroupWriteStream = new(audioGroupPath, FileMode.Create);
         UndertaleIO.Write(audioGroupWriteStream, audioGroupDat);
     }
+    */
 
     // Determine sound flags.
     UndertaleSound.AudioEntryFlags flags = UndertaleSound.AudioEntryFlags.Regular;
