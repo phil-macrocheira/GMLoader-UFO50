@@ -424,7 +424,7 @@ public class GMLoaderProgram
             {
                 Log.Information($"Missing GMLoader.ini while trying to find it on {logFile}\n\n\nPress any key to close...");
                 Console.ReadKey();
-                Environment.Exit(0);
+                Environment.Exit(2);
             }
 
             IConfig config = new ConfigurationBuilder<IConfig>()
@@ -588,19 +588,19 @@ public class GMLoaderProgram
             {
                 Log.Information("What are you trying to do? \n\n\nPress any key to close...");
                 Console.ReadKey();
-                Environment.Exit(0);
+                Environment.Exit(2);
             }
             else if (dirBuiltInCSXFiles.Length == 0 && dirPreCSXFiles.Length == 0 && dirPostCSXFiles.Length == 0 && dirAfterCSXFiles.Length == 0)
             {
                 Log.Information($"The CSX Script folder path is empty.\nAborting the process\n\n\nPress any key to close...");
                 Console.ReadKey();
-                Environment.Exit(0);
+                Environment.Exit(2);
             }
             else if (!dirBuiltInCSXFiles.Any(x => x.EndsWith(".csx")) && !dirPreCSXFiles.Any(x => x.EndsWith(".csx")) && !dirPostCSXFiles.Any(x => x.EndsWith(".csx")) && !dirAfterCSXFiles.Any(x => x.EndsWith(".csx")))
             {
                 Log.Information($"No CSX Script file found in the csx directory.\nAborting the process\n\n\nPress any key to close...");
                 Console.ReadKey();
-                Environment.Exit(0);
+                Environment.Exit(2);
             }
 
             if (args.Contains("-convert") || convertMode)
@@ -622,7 +622,7 @@ public class GMLoaderProgram
                     {
                         Console.WriteLine($"\nError, game data hash is not equal to the supportedDataHash, if your game is modded previously just reinstall or verify the game.\nOtherwise the modloader hash data is outdated and you need to wait for the update.\n\nIf your using MO2, check the overwrite folder and delete {gameDataPath} if it exists");
                         Console.ReadKey();
-                        Environment.Exit(0);
+                        Environment.Exit(1);
                     }
                     else if (checkHash)
                     {
@@ -639,7 +639,7 @@ public class GMLoaderProgram
                 {
                     Log.Error($"Error, Missing {gameDataPath}");
                     Console.ReadKey();
-                    Environment.Exit(0);
+                    Environment.Exit(2);
                 }
             }
             else
@@ -662,7 +662,7 @@ public class GMLoaderProgram
             {
                 Log.Information($"\nError, Game Data Hash Mismatch.\nThis happens because modloader is outdated or the {gameDataPath} is modified.\n\nDelete {backupDataPath} and reinstall or verify the integrity of game.\n\nIf your using MO2, check the overwrite folder and delete {backupDataPath}\n\n\nPress any key to close...");
                 Console.ReadKey();
-                Environment.Exit(0);
+                Environment.Exit(1);
             }
             else
             {
@@ -775,6 +775,7 @@ public class GMLoaderProgram
             Log.Error("An error occurred: " + e.Message);
             Console.WriteLine("Press any key to close...");
             Console.ReadKey();
+            Environment.Exit(1);
         }
     }
 
@@ -2001,18 +2002,7 @@ public class GMLoaderProgram
 
     private static async Task RunCSharpFile(string path)
     {
-        string lines;
-        try
-        {
-            lines = File.ReadAllText(path);
-        }
-        catch (Exception exc)
-        {
-            // rethrow as otherwise this will get interpreted as success
-            Log.Error(exc.Message);
-            throw;
-        }
-
+        string lines = File.ReadAllText(path);
         lines = $"#line 1 \"{path}\"\n" + lines;
         var ScriptPath = path;
         await RunCSharpCode(lines, ScriptPath);
@@ -2033,32 +2023,20 @@ public class GMLoaderProgram
     private static async Task RunCSharpCode(string code, string scriptFile = null)
     {
         Log.Information($"Attempting to execute '{Path.GetFileName(scriptFile)}'");
-        var ScriptErrorMessage = "";
-        var ScriptExecutionSuccess = false;
         try
         {
             await CSharpScript.EvaluateAsync(code, CliScriptOptions.WithFilePath(Path.GetFullPath(scriptFile ?? "")).WithFileEncoding(Encoding.UTF8), new Program() { FilePath = gameDataPath }, typeof(Program));
-            ScriptExecutionSuccess = true;
-            ScriptErrorMessage = "";
         }
         catch (Exception exc)
         {
-            ScriptExecutionSuccess = false;
-            ScriptErrorMessage = exc.ToString();
-            //ScriptErrorType = "Exception";
+            // rethrow as otherwise this will get interpreted as success
             Log.Error(exc.ToString());
+            throw;
         }
 
         //if (!FinishedMessageEnabled) return;
 
-        if (ScriptExecutionSuccess)
-        {
-            Log.Information($"Finished executing '{Path.GetFileName(scriptFile)}'");
-        }
-        else
-        {
-            Log.Error(ScriptErrorMessage);
-        }
+        Log.Information($"Finished executing '{Path.GetFileName(scriptFile)}'");
     }
 
     private static void ScriptOptionsInitialize()
