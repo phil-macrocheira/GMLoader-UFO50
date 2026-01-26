@@ -1,3 +1,11 @@
-﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
   <PropertyChanged />
+  <Costura>
+    <IncludeDebugSymbols>false</IncludeDebugSymbols>
+    <CreateTemporaryAssemblies>false</CreateTemporaryAssemblies>
+    <DisableCleanup>false</DisableCleanup>
+    <DisableCompression>false</DisableCompression>
+    <LoadAtModuleInit>true</LoadAtModuleInit>
+  </Costura>
 </Weavers>
