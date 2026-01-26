@@ -1,9 +1,6 @@
 ﻿#region Using Directives
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
+using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -12,22 +9,25 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Config.Net;
+using ImageMagick;
+using VYaml.Serialization;
+using VYaml.Annotations;
+using Underanalyzer.Compiler;
+using Underanalyzer.Decompiler;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
 using UndertaleModLib.Scripting;
 using UndertaleModLib.Util;
-using Config.Net;
-using ImageMagick;
-using Underanalyzer.Compiler;
-using Underanalyzer.Decompiler;
-using System.Text;
-using VYaml.Serialization;
-using VYaml.Annotations;
 using UndertaleModLib.Compiler;
-using Microsoft.CodeAnalysis;
-using System.Collections.Concurrent;
-using System.IO;
 #endregion
 
 namespace GMLoader;
@@ -428,9 +428,9 @@ public class GMLoaderProgram
             string modsPathAbsoluteDir = Path.GetFullPath(modsPath);
             if (Directory.Exists(modsPath))
             {
-                Log.Debug($"Scanning the filetree of {modsPathAbsoluteDir}");
-                Log.Debug($"{Path.GetFileName(modsPathAbsoluteDir)}");
-                PrintFileTree(modsPath, "", true);
+                //Log.Debug($"Scanning the filetree of {modsPathAbsoluteDir}");
+                //Log.Debug($"{Path.GetFileName(modsPathAbsoluteDir)}");
+                //PrintFileTree(modsPath, "", true);
             }
 
             string[] dirPreCSXFiles = Directory.GetFiles(importPreCSXPath, "*.csx")
@@ -606,7 +606,6 @@ public class GMLoaderProgram
 
         if (spriteConfigFiles.Length == 0 && backgroundConfigFiles.Length == 0 && spriteStripStyleConfigFiles.Length == 0)
         {
-            Log.Debug($"No sprite/background config files found at {texturesConfigPath}, skipping texture import");
             return;
         }
 
@@ -806,14 +805,14 @@ public class GMLoaderProgram
         for (int i = 0; i < files.Length; i++)
         {
             bool lastFile = (i == files.Length - 1 && directories.Length == 0);
-            Log.Debug($"{indent}{(lastFile ? "└── " : "├── ")}{Path.GetFileName(files[i])}");
+            //Log.Debug($"{indent}{(lastFile ? "└── " : "├── ")}{Path.GetFileName(files[i])}");
         }
 
         for (int i = 0; i < directories.Length; i++)
         {
             bool lastDir = i == directories.Length - 1;
-            Log.Debug($"{indent}{(lastDir ? "└── " : "├── ")}{Path.GetFileName(directories[i])}");
-            PrintFileTree(directories[i], indent + (lastDir ? "    " : "|   "), lastDir);
+            //Log.Debug($"{indent}{(lastDir ? "└── " : "├── ")}{Path.GetFileName(directories[i])}");
+            //PrintFileTree(directories[i], indent + (lastDir ? "    " : "|   "), lastDir);
         }
     }
 
