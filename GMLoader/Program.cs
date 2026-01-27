@@ -274,7 +274,7 @@ public class GMLoaderProgram
     public static int defaultAudioGroupIndex { get; set; }
     public static int defaultAudioFileID { get; set; }
     public static bool defaultAudioPreload { get; set; }
-    public static string DllDirectory => Path.GetDirectoryName(typeof(GMLoaderProgram).Assembly.Location)!;
+    public static string DllDirectory => Path.Combine(AppContext.BaseDirectory, "GMLoader");
 
     public static Dictionary<string, int> moddedTextureCounts = new();
     public static List<string> vanillaSpriteList = new();

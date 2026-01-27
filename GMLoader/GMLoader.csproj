@@ -11,7 +11,7 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
 
@@ -61,5 +61,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="PublishAll">
+    <Exec Command="dotnet publish -c Release -r win-x64 -o $(SolutionDir)publish/win-x64" />
+    <Exec Command="dotnet publish -c Release -r linux-x64 -o $(SolutionDir)publish/linux-x64" />
+  </Target>
 
 </Project>
