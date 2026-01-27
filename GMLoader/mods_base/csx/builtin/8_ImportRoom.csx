@@ -4,16 +4,8 @@
 
 string[] dirFiles = Directory.GetFiles(roomPath, "*.json");
 
-if (dirFiles.Length == 0)
-{
-    Log.Debug("The room import folder path is empty. At " + Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, roomPath)) + " , skipping the process");
+if (dirFiles.Length == 0 || !dirFiles.Any(x => x.EndsWith(".json")))
     return;
-}
-else if (!dirFiles.Any(x => x.EndsWith(".json")))
-{
-    Log.Debug("The room import folder doesn't have any room files, skipping the process.");
-    return;
-}
 
 UndertaleRoom newRoom = new UndertaleRoom();
 

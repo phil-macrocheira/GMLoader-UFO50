@@ -1,24 +1,11 @@
-bool hasGML = true;
-
 mkDir(appendGMLPath);
 string[] directories = Directory.GetDirectories(appendGMLPath)
                                .OrderBy(d => d, StringComparer.OrdinalIgnoreCase)
                                .ToArray();
 
-if (!compileGML)
-{
-    Log.Information("GML compiling is disabled, skipping the process.");
-    return;
-}
-else if (directories.Length == 0)
-{
-    Log.Debug("The appendGML import folder path is empty. At " + Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, appendGMLPath)) + " , skipping the process");
-    hasGML = false;
-}
-
 UndertaleModLib.Compiler.CodeImportGroup importGroup = new(Data, null, defaultDecompSettings);
 
-if (hasGML)
+if (directories.Length != 0)
 {
     foreach (string directory in directories)
     {

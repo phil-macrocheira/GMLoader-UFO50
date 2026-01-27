@@ -6,21 +6,10 @@ string[] codeConfigDirFiles = Directory.GetFiles(gmlCodePatchPath, "*.yaml")
                              .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
                              .ToArray();
 
-if (!compileGML)
-{
-    Log.Debug("GML compiling is disabled, skipping the process.");
+if (dirFiles.Length == 0 && codeConfigDirFiles.Length == 0)
     return;
-}
-else if (dirFiles.Length == 0 && codeConfigDirFiles.Length == 0)
-{
-    Log.Debug("The GML import folder path is empty, skipping the process");
-    return;
-}
 else if (!dirFiles.Any(x => x.EndsWith(".gml", StringComparison.OrdinalIgnoreCase)) && !codeConfigDirFiles.Any(x => x.EndsWith(".yaml", StringComparison.OrdinalIgnoreCase)))
-{
-    Log.Debug("The GML import folder doesn't have any GML files, skipping the process.");
     return;
-}
 
 UndertaleModLib.Compiler.CodeImportGroup importGroup = new(Data, null, defaultDecompSettings)
 {
@@ -35,4 +24,7 @@ foreach (string file in dirFiles)
     importGroup.QueueReplace(codeName, code);
 }
 importGroup.Import(true);
-importConfigDefinedCode(importGroup);
+
+bool success = importConfigDefinedCode(importGroup);
+if (!success)
+    throw new Exception();

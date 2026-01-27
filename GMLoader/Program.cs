@@ -1,15 +1,16 @@
 ﻿#region Using Directives
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -18,6 +19,8 @@ using Serilog.Core;
 using Serilog.Events;
 using Config.Net;
 using ImageMagick;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using VYaml.Serialization;
 using VYaml.Annotations;
 using Underanalyzer.Compiler;
@@ -81,9 +84,6 @@ public class GMLoaderResult
 
 public interface IConfig
 {
-    public bool AutoGameStart { get; }
-    public string TextureExclusion { get; }
-    public string GameExecutable { get; }
     public string ImportPreCSX { get; }
     public string ImportBuiltinCSX { get; }
     public string ImportPostCSX { get; }
@@ -97,12 +97,10 @@ public interface IConfig
     public string BackgroundsConfigDirectory { get; }
     public string AudioDirectory { get; }
     public string AudioConfigDirectory { get; }
-    public string ShaderDirectory { get; }
     public string ConfigDirectory { get; }
     public string GMLCodeDirectory { get; }
     public string GMLCodePatchDirectory { get; }
     public string CollisionDirectory { get; }
-    public string ASMDirectory { get; }
     public string PrependGMLDirectory { get; }
     public string AppendGMLDirectory { get; }
     public string AppendGMLCollisionDirectory { get; }
@@ -214,8 +212,6 @@ public class GMLoaderProgram
     private static ScriptOptions CliScriptOptions { get; set; } = null!;
     public static string gameDataPath { get; set; } = string.Empty;
     public static string modsPath { get; set; } = string.Empty;
-    public static string textureExclusion { get; set; } = string.Empty;
-    public static List<string> textureExclusionList { get; set; } = new List<string>();
     public static string importPreCSXPath { get; set; } = string.Empty;
     public static string importBuiltInCSXPath { get; set; } = string.Empty;
     public static string importPostCSXPath { get; set; } = string.Empty;
@@ -233,13 +229,11 @@ public class GMLoaderProgram
     public static string backgroundsConfigPath { get; set; } = string.Empty;
     public static string audioPath { get; set; } = string.Empty;
     public static string audioConfigPath { get; set; } = string.Empty;
-    public static string shaderPath { get; set; } = string.Empty;
     public static string configPath { get; set; } = string.Empty;
     public static DecompileSettings defaultDecompSettings { get; set; } = null!;
     public static string gmlCodePath { get; set; } = string.Empty;
     public static string gmlCodePatchPath { get; set; } = string.Empty;
     public static string collisionPath { get; set; } = string.Empty;
-    public static string asmPath { get; set; } = string.Empty;
     public static string prependGMLPath { get; set; } = string.Empty;
     public static string appendGMLPath { get; set; } = string.Empty;
     public static string appendGMLCollisionPath { get; set; } = string.Empty;
@@ -280,6 +274,7 @@ public class GMLoaderProgram
     public static int defaultAudioGroupIndex { get; set; }
     public static int defaultAudioFileID { get; set; }
     public static bool defaultAudioPreload { get; set; }
+    public static string DllDirectory => Path.GetDirectoryName(typeof(GMLoaderProgram).Assembly.Location)!;
 
     public static Dictionary<string, int> moddedTextureCounts = new();
     public static List<string> vanillaSpriteList = new();
@@ -346,32 +341,30 @@ public class GMLoaderProgram
         try
         {
             #region Config
-            textureExclusion = config.TextureExclusion;
-            importPreCSXPath = config.ImportPreCSX;
-            importBuiltInCSXPath = config.ImportBuiltinCSX;
-            importPostCSXPath = config.ImportPostCSX;
-            importAfterCSXPath = config.ImportAfterCSX;
-            gameDataPath = config.GameData;
-            modsPath = config.ModsDirectory;
-            texturesPath = config.TexturesDirectory;
-            backgroundsTexturePath = config.BackgroundTextureDirectory;
-            noStripTexturesPath = config.NoStripTexturesDirectory;
-            texturesConfigPath = config.TexturesConfigDirectory;
-            backgroundsConfigPath = config.BackgroundsConfigDirectory;
-            audioPath = config.AudioDirectory;
-            audioConfigPath = config.AudioConfigDirectory;
-            shaderPath = config.ShaderDirectory;
-            configPath = config.ConfigDirectory;
-            gmlCodePath = config.GMLCodeDirectory;
-            gmlCodePatchPath = config.GMLCodePatchDirectory;
-            collisionPath = config.CollisionDirectory;
-            asmPath = config.ASMDirectory;
-            prependGMLPath = config.PrependGMLDirectory;
-            appendGMLPath = config.AppendGMLDirectory;
-            appendGMLCollisionPath = config.AppendGMLCollisionDirectory;
-            newObjectPath = config.NewObjectDirectory;
-            existingObjectPath = config.ExistingObjectDirectory;
-            roomPath = config.RoomDirectory;
+            importPreCSXPath = Path.Combine(DllDirectory, config.ImportPreCSX);
+            importBuiltInCSXPath = Path.Combine(DllDirectory, config.ImportBuiltinCSX);
+            importPostCSXPath = Path.Combine(DllDirectory, config.ImportPostCSX);
+            importAfterCSXPath = Path.Combine(DllDirectory, config.ImportAfterCSX);
+            gameDataPath = Path.Combine(DllDirectory, config.GameData);
+            modsPath = Path.Combine(DllDirectory, config.ModsDirectory);
+            texturesPath = Path.Combine(DllDirectory, config.TexturesDirectory);
+            backgroundsTexturePath = Path.Combine(DllDirectory, config.BackgroundTextureDirectory);
+            noStripTexturesPath = Path.Combine(DllDirectory, config.NoStripTexturesDirectory);
+            texturesConfigPath = Path.Combine(DllDirectory, config.TexturesConfigDirectory);
+            backgroundsConfigPath = Path.Combine(DllDirectory, config.BackgroundsConfigDirectory);
+            audioPath = Path.Combine(DllDirectory, config.AudioDirectory);
+            audioConfigPath = Path.Combine(DllDirectory, config.AudioConfigDirectory);
+            configPath = Path.Combine(DllDirectory, config.ConfigDirectory);
+            gmlCodePath = Path.Combine(DllDirectory, config.GMLCodeDirectory);
+            gmlCodePatchPath = Path.Combine(DllDirectory, config.GMLCodePatchDirectory);
+            collisionPath = Path.Combine(DllDirectory, config.CollisionDirectory);
+            prependGMLPath = Path.Combine(DllDirectory, config.PrependGMLDirectory);
+            appendGMLPath = Path.Combine(DllDirectory, config.AppendGMLDirectory);
+            appendGMLCollisionPath = Path.Combine(DllDirectory, config.AppendGMLCollisionDirectory);
+            newObjectPath = Path.Combine(DllDirectory, config.NewObjectDirectory);
+            existingObjectPath = Path.Combine(DllDirectory, config.ExistingObjectDirectory);
+            roomPath = Path.Combine(DllDirectory, config.RoomDirectory);
+
             defaultSpriteX = config.DefaultSpriteX;
             defaultSpriteY = config.DefaultSpriteY;
             defaultSpriteSpeedType = config.DefaultSpriteSpeedType;
@@ -408,8 +401,6 @@ public class GMLoaderProgram
             defaultAudioPreload = config.DefaultAudioPreload;
             #endregion
 
-            textureExclusionList = textureExclusion.Split(',').ToList();
-
             mkDir(modsPath);
             mkDir(texturesPath);
             mkDir(texturesConfigPath);
@@ -444,7 +435,7 @@ public class GMLoaderProgram
 
             if (!File.Exists(gameDataPath))
             {
-                return GMLoaderResult.Fail($"Game data file not found: {gameDataPath}");
+                return GMLoaderResult.Fail($"data.win not found at {gameDataPath}");
             }
 
             Data = new UndertaleData();
@@ -486,14 +477,17 @@ public class GMLoaderProgram
         }
     }
 
-    public static void importConfigDefinedCode(CodeImportGroup importGroup)
+    public static bool importConfigDefinedCode(CodeImportGroup importGroup)
     {
+        bool success = true;
+
         string[] configFiles = Directory.GetFiles(gmlCodePatchPath, "*.yaml*", SearchOption.TopDirectoryOnly)
             .OrderBy(f => f, StringComparer.OrdinalIgnoreCase).ToArray();
 
-        if (configFiles.Length == 0) return;
+        if (configFiles.Length == 0)
+            return true;
 
-        Log.Information("Executing built-in ImportCodePatch...");
+        Log.Information("Importing code patches...");
         var modificationHistory = new Dictionary<string, List<string>>();
 
         foreach (string file in configFiles)
@@ -516,17 +510,21 @@ public class GMLoaderProgram
                     modificationHistory[scriptName].Add(fileName);
 
                     foreach (CodeData patch in patches)
-                        ProcessCodePatch(importGroup, fileName, scriptName, patch, modificationHistory);
+                        if (!ProcessCodePatch(importGroup, fileName, scriptName, patch, modificationHistory))
+                            success = false;
                 }
             }
             catch (Exception e)
             {
                 Log.Error($"Failed to process {Path.GetFileName(file)}: {e}");
+                success = false;
             }
         }
+
+        return success;
     }
 
-    public static void ProcessCodePatch(CodeImportGroup importGroup, string fileName, string scriptName, CodeData patch, Dictionary<string, List<string>> modificationHistory)
+    public static bool ProcessCodePatch(CodeImportGroup importGroup, string fileName, string scriptName, CodeData patch, Dictionary<string, List<string>> modificationHistory)
     {
         string type = patch.yml_type ?? "";
         string? find = patch.yml_find;
@@ -536,11 +534,11 @@ public class GMLoaderProgram
         switch (type.ToLowerInvariant())
         {
             case "findreplace":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueFindReplace(scriptName, find, code, caseSensitive);
                 break;
             case "findreplacetrim":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code, caseSensitive);
                 break;
             case "append":
@@ -550,36 +548,38 @@ public class GMLoaderProgram
                 importGroup.QueuePrepend(scriptName, code);
                 break;
             case "findappend":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueFindReplace(scriptName, find, find + Environment.NewLine + code, caseSensitive);
                 break;
             case "findprepend":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueFindReplace(scriptName, find, code + Environment.NewLine + find, caseSensitive);
                 break;
             case "findappendtrim":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, find + Environment.NewLine + code, caseSensitive);
                 break;
             case "findprependtrim":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Find pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueTrimmedLinesFindReplace(scriptName, find, code + Environment.NewLine + find, caseSensitive);
                 break;
             case "findreplaceregex":
-                if (string.IsNullOrEmpty(find)) { Log.Error($"Regex pattern is empty for {scriptName}, skipping"); return; }
+                if (string.IsNullOrEmpty(find)) { Log.Error($"Regex pattern is empty for {scriptName}"); return false; }
                 importGroup.QueueRegexFindReplace(scriptName, find, code, caseSensitive);
-                break;
-            default:
-                Log.Error($"Unknown patch type '{type}' for {scriptName}, skipping");
                 break;
         }
 
-        try { importGroup.Import(); }
+        try
+        { 
+            importGroup.Import();
+            return true;
+        }
         catch (Exception e)
         {
             string history = modificationHistory.ContainsKey(scriptName)
                 ? string.Join(", ", modificationHistory[scriptName]) : "no modifications recorded";
-            Log.Warning($"Error on {fileName} processing {scriptName}\n'{scriptName}' modified by: {history}\nFind: {find}\nCode: {code}\nException: {e}\n");
+            Log.Error($"Error on {fileName} processing {scriptName}\n'{scriptName}' modified by: {history}\nFind: {find}\nCode: {code}\nException: {e}\n");
+            return false;
         }
     }
 
@@ -609,7 +609,7 @@ public class GMLoaderProgram
             return;
         }
 
-        Log.Information("Executing built-in ImportGraphic");
+        Log.Information("Importing sprites...");
         var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
 
         if (spriteConfigFiles.Length != 0)
@@ -748,7 +748,7 @@ public class GMLoaderProgram
 
         if (audioConfigFiles.Length == 0) return;
 
-        Log.Information("Executing built-in ImportAudio");
+        Log.Information("Importing audio...");
         var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
 
         var audioFilenames = new ConcurrentBag<string>();
@@ -889,6 +889,8 @@ public class GMLoaderProgram
             typeof(ImageMagick.Drawing.DrawableAlpha).GetTypeInfo().Assembly,
             typeof(PixelFormat).GetTypeInfo().Assembly,
             typeof(YamlSerializer).GetTypeInfo().Assembly,
+            typeof(JObject).GetTypeInfo().Assembly,
+            typeof(System.Text.Json.Utf8JsonReader).GetTypeInfo().Assembly,
             typeof(Log).Assembly,
         };
 
@@ -902,7 +904,8 @@ public class GMLoaderProgram
                 "System.Drawing", "System.Drawing.Imaging", "System.Collections",
                 "System.Text.RegularExpressions", "System.Diagnostics",
                 "System.Threading", "System.Threading.Tasks", 
-                "VYaml", "VYaml.Serialization", "VYaml.Annotations")
+                "VYaml", "VYaml.Serialization", "VYaml.Annotations",
+                "Newtonsoft.Json", "Newtonsoft.Json.Linq", "System.Text.Json")
             .WithEmitDebugInformation(true);
     }
     #endregion

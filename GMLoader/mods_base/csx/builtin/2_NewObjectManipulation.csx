@@ -1,16 +1,8 @@
-mkDir(existingObjectPath);
-string[] objFiles = Directory.GetFiles(existingObjectPath, "*.json");
+mkDir(newObjectPath);
+string[] objFiles = Directory.GetFiles(newObjectPath, "*.json");
 
-if (objFiles.Length == 0)
-{
-    Log.Debug("The config import folder path is empty. At " + Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, existingObjectPath)) + " , skipping the process");
+if (objFiles.Length == 0 || !objFiles.Any(x => x.EndsWith(".json")))
     return;
-}
-else if (!objFiles.Any(x => x.EndsWith(".json")))
-{
-    Log.Debug("The config folder doesn't have any json files, skipping the process.");
-    return;
-}
 
 string jsonContent;
 //General Properties
@@ -39,7 +31,7 @@ bool _objIsKinematic;
 
 foreach (string file in objFiles)
 {
-    Log.Information($"Manipulating existing {Path.GetFileNameWithoutExtension(file)} properties");
+    Log.Information($"Adding and Manipulating {Path.GetFileNameWithoutExtension(file)} properties");
     _objName = Path.GetFileNameWithoutExtension(file);
 
     jsonContent = File.ReadAllText(file);
@@ -56,7 +48,8 @@ foreach (string file in objFiles)
     _objUsesPhysics = (bool)jsonObject["UsesPhysics"];
     _objIsSensor = (bool)jsonObject["IsSensor"];
 
-    var Obj = Data.GameObjects.ByName(_objName);
+    var Obj = new UndertaleGameObject();
+    Data.GameObjects.Add(Obj);
 
     //General Properties
     Obj.Name = Data.Strings.MakeString(_objName);
@@ -73,6 +66,3 @@ foreach (string file in objFiles)
     //Physics Properties (unimplemented)
 
 }
-
-
-

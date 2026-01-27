@@ -1,19 +1,10 @@
-mkDir(newObjectPath);
-string[] objFiles = Directory.GetFiles(newObjectPath, "*.json");
+mkDir(existingObjectPath);
+string[] objFiles = Directory.GetFiles(existingObjectPath, "*.json");
 
-if (objFiles.Length == 0)
-{
-    Log.Debug("The config import folder path is empty. At " + Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, newObjectPath)) + " , skipping the process");
+if (objFiles.Length == 0 || !objFiles.Any(x => x.EndsWith(".json")))
     return;
-}
-else if (!objFiles.Any(x => x.EndsWith(".json")))
-{
-    Log.Debug("The config folder doesn't have any json files, skipping the process.");
-    return;
-}
 
 string jsonContent;
-//General Properties
 string _objName;
 string _objSprite;
 string _objParentID;
@@ -26,20 +17,12 @@ bool _objIsPersistent;
 bool _objUsesPhysics;
 bool _objIsSensor;
 
-//Physics Properties (currently not used)
-int _objDensity;
-int _objRestitution;
 int _objGroup;
-int _objLinearDamping;
-int _objAngularDamping;
-int _objFriction;
-
 bool _objIsAwake;
-bool _objIsKinematic;
 
 foreach (string file in objFiles)
 {
-    Log.Information($"Adding and Manipulating {Path.GetFileNameWithoutExtension(file)} properties");
+    Log.Information($"Manipulating existing {Path.GetFileNameWithoutExtension(file)} properties");
     _objName = Path.GetFileNameWithoutExtension(file);
 
     jsonContent = File.ReadAllText(file);
@@ -56,10 +39,8 @@ foreach (string file in objFiles)
     _objUsesPhysics = (bool)jsonObject["UsesPhysics"];
     _objIsSensor = (bool)jsonObject["IsSensor"];
 
-    var Obj = new UndertaleGameObject();
-    Data.GameObjects.Add(Obj);
+    var Obj = Data.GameObjects.ByName(_objName);
 
-    //General Properties
     Obj.Name = Data.Strings.MakeString(_objName);
     Obj.Sprite = Data.Sprites.ByName(_objSprite);
     Obj.ParentId = Data.GameObjects.ByName(_objParentID);
@@ -70,7 +51,4 @@ foreach (string file in objFiles)
     Obj.Persistent = _objIsPersistent;
     Obj.UsesPhysics = _objUsesPhysics;
     Obj.IsSensor = _objIsSensor;
-
-    //Physics Properties (unimplemented)
-
 }

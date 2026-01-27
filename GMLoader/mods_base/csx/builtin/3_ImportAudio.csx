@@ -15,12 +15,6 @@ UndertaleEmbeddedAudio audioFile = null;
 int audioID = -1;
 int audioGroupID = -1;
 int embAudioID = -1;
-bool usesAGRP = (Data.AudioGroups.Count > 0);
-
-if (!usesAGRP)
-{
-    Log.Debug("This game doesn't use audiogroups.\nImporting to external audiogroups is disabled.");
-}
 
 string importFolder = audioPath;
 List<string> dirFilesList = new List<string>(Directory.GetFiles(importFolder));
@@ -165,14 +159,7 @@ foreach (var audioEntry in audioDictionary)
 
     // Determine final audio group reference (or null).
     UndertaleAudioGroup finalGroupReference = null;
-    if (!usesAGRP)
-    {
-        finalGroupReference = null;
-    }
-    else
-    {
-        finalGroupReference = needAGRP ? Data.AudioGroups[audioGroupID] : Data.AudioGroups[Data.GetBuiltinSoundGroupID()];
-    }
+    finalGroupReference = needAGRP ? Data.AudioGroups[audioGroupID] : Data.AudioGroups[Data.GetBuiltinSoundGroupID()];
 
     // Update/create actual sound asset.
     if (existingSound is null)
