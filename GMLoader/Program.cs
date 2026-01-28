@@ -444,7 +444,7 @@ public class GMLoaderProgram
                 Data = UndertaleIO.Read(stream);
             }
 
-            defaultDecompSettings = new DecompileSettings()
+            defaultDecompSettings = new Underanalyzer.Decompiler.DecompileSettings()
             {
                 RemoveSingleLineBlockBraces = true,
                 EmptyLineAroundBranchStatements = true,
